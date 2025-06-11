@@ -68,4 +68,45 @@ describe('TODOMvc App', () => {
       .children()
       .should('have.length', 2);
   });
+
+  it('Edita uma tarefa existente', () => {
+  cy.visit('');
+
+  cy.get('[data-cy=todo-input]').type('Tarefa para editar{enter}');
+
+  cy.get('[data-cy=todos-list] li label')
+    .dblclick();
+
+  cy.get('[data-cy=todos-list] li .edit')
+    .clear()
+    .type('Tarefa editada com sucesso{enter}');
+
+  cy.get('[data-cy=todos-list] li label')
+    .should('have.text', 'Tarefa editada com sucesso');
+});
+
+  it('Marca todas as tarefas como concluídas', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]').type('Tarefa 1{enter}').type('Tarefa 2{enter}');
+
+    cy.get('.toggle-all-label').click();
+
+    cy.get('[data-cy=todos-list] li').each(($el) => {
+      cy.wrap($el).should('have.class', 'completed');
+    });
+  });
+
+  it('Remove tarefas concluídas', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]').type('Tarefa concluída{enter}');
+
+    cy.get('[data-cy=toggle-todo-checkbox]').click();
+
+    cy.get('.clear-completed').click();
+
+    cy.get('[data-cy=todos-list]').children().should('have.length', 0);
+  });
+
 });
