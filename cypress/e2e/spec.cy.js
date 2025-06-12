@@ -68,4 +68,55 @@ describe('TODOMvc App', () => {
       .children()
       .should('have.length', 2);
   });
+  
+  it('Edição de uma tarefa', () => {
+  cy.visit('');
+
+  cy.get('[data-cy=todo-input]')
+    .type('Estudar Cypress{enter}');
+
+  cy.get('[data-cy=todos-list] > li')
+    .dblclick();
+
+  cy.get('[data-cy=todos-list] > li.editing input.edit')
+    .clear()
+    .type('Estudar Cypress avançado{enter}');
+
+  cy.get('[data-cy=todos-list] > li')
+    .should('contain.text', 'Estudar Cypress avançado');
+});
+
+it('Assinala todas as tarefas individualmente como completas', () => {
+  cy.visit('');
+
+  cy.get('[data-cy=todo-input]')
+    .type('Tarefa 1{enter}')
+    .type('Tarefa 2{enter}');
+
+  cy.get('[data-cy=toggle-todo-checkbox]')
+    .each(($el) => {
+      cy.wrap($el).click().should('be.checked');
+    });
+});
+
+it('Limpa tarefas completas', () => {
+  cy.visit('');
+
+  cy.get('[data-cy=todo-input]')
+    .type('Estudar Cypress{enter}')
+    .type('Ler documentação{enter}');
+
+  cy.get('[data-cy=toggle-todo-checkbox]')
+    .first()
+    .click();
+
+  cy.get('.clear-completed')
+    .click();
+
+  cy.get('[data-cy=todos-list]')
+    .children()
+    .should('have.length', 1)
+    .first()
+    .should('have.text', 'Ler documentação');
+});
 });
