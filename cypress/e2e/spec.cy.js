@@ -68,4 +68,37 @@ describe('TODOMvc App', () => {
       .children()
       .should('have.length', 2);
   });
+
+  it('Verifica o title da página', () => {
+    cy.visit('');
+
+    cy.title().should('eq', 'TodoMVC: JavaScript Es5');
+  });
+
+  it('Conta o número de tarefas a fazer', () => {
+    cy.visit('');
+    cy.get('[data-cy=todo-input]')
+      .type('TP2 de Engenharia de Software{enter}')
+      .type('Prova de Engenharia de Software{enter}');
+    cy.get('[data-cy=todos-list]')
+      .children()
+      .should('have.length', 2);
+  });
+
+  it('Marca uma tarefa como completa', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]')
+      .type('TP2 de Engenharia de Software{enter}');
+
+    cy.get('[data-cy=todos-list] > li [data-cy=toggle-todo-checkbox]')
+      .first()
+      .click();
+
+    cy.get('[data-cy=todos-list] > li')
+      .first()
+      .should('have.class', 'completed');
+  });
 });
+
+
