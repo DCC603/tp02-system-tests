@@ -1,4 +1,9 @@
 describe('TODOMvc App', () => {
+
+  beforeEach(() => {
+    cy.visit('http://localhost:7001')
+  })
+
   it('Verifica se app está abrindo', () => {
     cy.visit('')
   })
@@ -68,4 +73,35 @@ describe('TODOMvc App', () => {
       .children()
       .should('have.length', 2);
   });
+  
+  it('Limpa o campo de input após adicionar uma tarefa', () => {
+      cy.get('[data-cy=todo-input]')
+        .type('teste clear{enter}')
+      cy.get('[data-cy=todo-input]')
+        .should('have.value', '')
+  })
+
+  it('Input possui placeholder correto', () => {
+    cy.get('[data-cy=todo-input]')
+      .should('have.attr', 'placeholder', 'What needs to be done?')
+  })
+
+
+   it('Limpa todas as tarefas concluídas', () => {
+    cy.get('[data-cy=todo-input]')
+      .type('t1{enter}')
+      .type('t2{enter}')
+      .type('t3{enter}')
+
+    cy.get('[data-cy=toggle-todo-checkbox]').eq(0).click()
+    cy.get('[data-cy=toggle-todo-checkbox]').eq(1).click()
+
+    cy.contains('Clear completed').should('be.visible').click()
+
+    cy.get('[data-cy=todos-list] li')
+      .should('have.length', 1)
+      .first()
+      .should('have.text', 't3')
+  })
+
 });
