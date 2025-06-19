@@ -1,23 +1,23 @@
 describe('TODOMvc App', () => {
   it('Verifica se app está abrindo', () => {
-    cy.visit('')
-  })
+    cy.visit('http://localhost:7001');
+  });
 
   it('Insere uma tarefa', () => {
-    cy.visit(''); 
+    cy.visit('http://localhost:7001');
 
     cy.get('[data-cy=todo-input]')
       .type('TP2 de Engenharia de Software{enter}');
 
     cy.get('[data-cy=todos-list]')
       .children()
-      .should('have.length', 1) 
+      .should('have.length', 1)
       .first()
-      .should('have.text', 'TP2 de Engenharia de Software'); 
+      .should('have.text', 'TP2 de Engenharia de Software');
   });
 
   it('Insere e deleta uma tarefa', () => {
-    cy.visit('');
+    cy.visit('http://localhost:7001');
 
     cy.get('[data-cy=todo-input]')
       .type('TP2 de Engenharia de Software{enter}');
@@ -36,7 +36,7 @@ describe('TODOMvc App', () => {
   });
 
   it('Filtra tarefas completas e ativas', () => {
-    cy.visit(''); 
+    cy.visit('http://localhost:7001');
 
     cy.get('[data-cy=todo-input]')
       .type('TP2 de ES{enter}')
@@ -46,7 +46,7 @@ describe('TODOMvc App', () => {
       .first()
       .click();
 
-    cy.get('[data-cy=filter-active-link')
+    cy.get('[data-cy=filter-active-link]')
       .click();
     cy.get('[data-cy=todos-list]')
       .children()
@@ -54,7 +54,7 @@ describe('TODOMvc App', () => {
       .first()
       .should('have.text', 'Prova de ES');
 
-    cy.get('[data-cy=filter-completed-link')
+    cy.get('[data-cy=filter-completed-link]')
       .click();
     cy.get('[data-cy=todos-list]')
       .children()
@@ -62,10 +62,62 @@ describe('TODOMvc App', () => {
       .first()
       .should('have.text', 'TP2 de ES');
 
-    cy.get('[data-cy=filter-all-link')
+    cy.get('[data-cy=filter-all-link]')
       .click();
     cy.get('[data-cy=todos-list]')
       .children()
       .should('have.length', 2);
+  });
+
+  it('Marca todas as tarefas como completas', () => {
+    cy.visit('http://localhost:7001');
+
+    cy.get('[data-cy=todo-input]')
+      .type('Tarefa 1{enter}')
+      .type('Tarefa 2{enter}');
+
+    cy.get('[data-cy=toggle-all-checkbox]')
+      .click();
+
+    cy.get('[data-cy=todos-list] > li')
+      .each(($el) => {
+        cy.wrap($el).find('[data-cy=toggle-todo-checkbox]').should('be.checked');
+      });
+  });
+
+  it('Edita uma tarefa', () => {
+    cy.visit('http://localhost:7001');
+
+    cy.get('[data-cy=todo-input]')
+      .type('Tarefa antiga{enter}');
+
+    cy.get('[data-cy=todos-list] > li')
+      .dblclick();
+
+    cy.get('[data-cy=todo-edit-input]')
+      .clear()
+      .type('Tarefa atualizada{enter}');
+
+    cy.get('[data-cy=todos-list]')
+      .children()
+      .first()
+      .should('have.text', 'Tarefa atualizada');
+  });
+
+  it('Limpa tarefas completas', () => {
+    cy.visit('http://localhost:7001');
+
+    cy.get('[data-cy=todo-input]')
+      .type('Completar ES{enter}');
+
+    cy.get('[data-cy=toggle-todo-checkbox]')
+      .check();
+
+    cy.get('[data-cy=clear-completed-btn]')
+      .click();
+
+    cy.get('[data-cy=todos-list]')
+      .children()
+      .should('have.length', 0);
   });
 });
