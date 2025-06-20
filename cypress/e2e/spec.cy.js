@@ -68,4 +68,59 @@ describe('TODOMvc App', () => {
       .children()
       .should('have.length', 2);
   });
+
+  it('Marca todas as tarefas como completas', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]')
+      .type('TP2{enter}')
+      .type('Relatório final{enter}');
+
+    cy.get('.toggle-all-label').click();
+
+    cy.get('[data-cy=todos-list] li')
+      .each(($el) => {
+        cy.wrap($el).should('have.class', 'completed');
+      });
+  });
+
+  it('Limpa tarefas completas', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]')
+      .type('TP2{enter}')
+      .type('Prova final{enter}');
+
+    cy.get('[data-cy=todos-list] li')
+      .first()
+      .find('[data-cy=toggle-todo-checkbox]')
+      .click();
+
+    cy.get('.clear-completed').click();
+
+    cy.get('[data-cy=todos-list]')
+      .children()
+      .should('have.length', 1)
+      .first()
+      .should('have.text', 'Prova final');
+  });
+
+  it('Edita uma tarefa com duplo clique', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]')
+      .type('TP2{enter}');
+
+    cy.get('[data-cy=todos-list] li label')
+      .dblclick();
+
+    cy.get('[data-cy=todos-list] li .edit')
+      .clear()
+      .type('TP2 atualizado{enter}');
+
+    cy.get('[data-cy=todos-list] li')
+      .first()
+      .should('contain.text', 'TP2 atualizado');
+  });
+
 });
