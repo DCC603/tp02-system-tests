@@ -68,4 +68,55 @@ describe('TODOMvc App', () => {
       .children()
       .should('have.length', 2);
   });
+
+  it('Edita uma tarefa existente', () => {
+    cy.visit('');
+    cy.get('[data-cy=todo-input]')
+      .type('Tarefa editável{enter}');
+    cy.get('[data-cy=todos-list] li')
+      .first()
+      .find('label')
+      .dblclick();
+    cy.get('[data-cy=todos-list] li')
+      .first()
+      .find('input.edit')
+      .clear()
+      .type('Tarefa editada{enter}');
+    cy.get('[data-cy=todos-list] li')
+      .first()
+      .find('label')
+      .should('have.text', 'Tarefa editada');
+  });
+
+  it('Marca e desmarca uma tarefa como concluída', () => {
+    cy.visit('');
+    cy.get('[data-cy=todo-input]')
+      .type('Tarefa para completar{enter}');
+    cy.get('[data-cy=toggle-todo-checkbox]')
+      .check();
+    cy.get('[data-cy=todos-list] li')
+      .should('have.class', 'completed');
+    cy.get('[data-cy=toggle-todo-checkbox]')
+      .uncheck();
+    cy.get('[data-cy=todos-list] li')
+      .should('not.have.class', 'completed');
+  });
+
+  it('Limpa todas as tarefas concluídas', () => {
+    cy.visit('');
+    cy.get('[data-cy=todo-input]')
+      .type('Tarefa ativa{enter}')
+      .type('Tarefa concluída{enter}');
+    cy.get('[data-cy=todos-list] li')
+      .last()
+      .find('[data-cy=toggle-todo-checkbox]')
+      .check();
+    cy.get('.clear-completed')
+      .click();
+    cy.get('[data-cy=todos-list] li')
+      .should('have.length', 1)
+      .first()
+      .find('label')
+      .should('have.text', 'Tarefa ativa');
+  });
 });
