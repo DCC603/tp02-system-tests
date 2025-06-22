@@ -68,4 +68,52 @@ describe('TODOMvc App', () => {
       .children()
       .should('have.length', 2);
   });
+
+  it('Marca todas as tarefas como completas', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]')
+      .type('Tarefa 1{enter}')
+      .type('Tarefa 2{enter}');
+
+    cy.get('[data-cy=todos-list] > li [data-cy=toggle-todo-checkbox]')
+      .each(($el) => {
+        cy.wrap($el).click();
+      });
+
+    cy.get('[data-cy=todos-list] > li [data-cy=toggle-todo-checkbox]')
+      .each(($el) => {
+        cy.wrap($el).should('be.checked');
+      });
+  });
+
+  it('Edita uma tarefa existente', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]')
+      .type('Editar tarefa{enter}');
+
+    cy.get('[data-cy=todos-list] > li')
+      .dblclick();
+
+    cy.get('.edit')
+      .clear()
+      .type('Tarefa editada{enter}');
+
+    cy.get('[data-cy=todos-list]')
+      .children()
+      .first()
+      .should('have.text', 'Tarefa editada');
+  });
+
+  it('Não adiciona tarefa vazia', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]')
+      .type('{enter}');
+
+    cy.get('[data-cy=todos-list]')
+      .children()
+      .should('have.length', 0);
+  });
 });
