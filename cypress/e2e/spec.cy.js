@@ -68,4 +68,39 @@ describe('TODOMvc App', () => {
       .children()
       .should('have.length', 2);
   });
+
+  it('Edita um item todo', () => {
+    cy.visit('');
+    cy.get('[data-cy=todo-input]').type('Edit this todo{enter}');
+    cy.get('[data-cy=todos-list] > li label')
+        .dblclick();
+    cy.get('[data-cy=todos-list] > li .edit')
+        .clear()
+        .type('Edited todo{enter}');
+    cy.get('[data-cy=todos-list]')
+        .children()
+        .first()
+        .should('have.text', 'Edited todo');
+  });
+
+  it('Marca todos os todos como completos', () => {
+    cy.visit('');
+    cy.get('[data-cy=todo-input]').type('Task 1{enter}Task 2{enter}');
+    cy.get('.toggle-all-label').click();
+    cy.get('[data-cy=todos-list] > li')
+        .each(($el) => {
+          cy.wrap($el).should('have.class', 'completed');
+        });
+  });
+
+  it('Limpa os todos completos', () => {
+    cy.visit('');
+    cy.get('[data-cy=todo-input]').type('To complete{enter}');
+    cy.get('[data-cy=todos-list] > li [data-cy=toggle-todo-checkbox]')
+        .click();
+    cy.get('.clear-completed').click();
+    cy.get('[data-cy=todos-list]')
+        .children()
+        .should('have.length', 0);
+  });
 });
