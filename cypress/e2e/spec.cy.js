@@ -68,4 +68,67 @@ describe('TODOMvc App', () => {
       .children()
       .should('have.length', 2);
   });
+  
+  it('Marca uma tarefa como completa', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]').type('Estudar Cypress{enter}');
+
+    cy.get('[data-cy=todos-list] > li')
+      .first()
+      .should('not.have.class', 'completed');
+
+    cy.get('[data-cy=todos-list] > li [data-cy=toggle-todo-checkbox]')
+      .first()
+      .click();
+
+    cy.get('[data-cy=todos-list] > li')
+      .first()
+      .should('have.class', 'completed');
+  });
+
+  it('Edita uma tarefa', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]')
+      .type('Tarefa antiga{enter}');
+
+    cy.get('[data-cy=todos-list] > li')
+      .first()
+      .dblclick();
+
+    cy.get('[data-cy=todos-list] > li input.edit')
+      .clear()
+      .type('Tarefa editada{enter}');
+
+    cy.get('[data-cy=todos-list] > li')
+      .first()
+      .should('have.text', 'Tarefa editada');
+  });
+
+  it('Remove todas as tarefas completas', () => {
+    cy.visit('');
+
+    cy.get('[data-cy=todo-input]')
+      .type('Tarefa 1{enter}')
+      .type('Tarefa 2{enter}');
+
+    cy.get('[data-cy=todos-list] > li [data-cy=toggle-todo-checkbox]')
+      .first()
+      .click();
+
+    cy.get('[data-cy=todos-list]')
+      .children()
+      .should('have.length', 2);
+
+    cy.get('[data-cy=todos-list] > li.completed [data-cy=remove-todo-btn]')
+      .invoke('show')
+      .click();
+
+    cy.get('[data-cy=todos-list]')
+      .children()
+      .should('have.length', 1)
+      .first()
+      .should('not.have.class', 'completed');
+  });
 });
