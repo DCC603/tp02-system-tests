@@ -69,3 +69,43 @@ describe('TODOMvc App', () => {
       .should('have.length', 2);
   });
 });
+
+it('Remove a tarefa se o texto da edição for apagado', () => {
+  cy.visit('');
+  cy.get('[data-cy=todo-input]').type('Tarefa a ser removida{enter}');
+
+  cy.get('[data-cy=todos-list] > li label').dblclick();
+  cy.get('li.editing .edit').clear().type('{enter}'); 
+
+  cy.get('[data-cy=todos-list]').children().should('have.length', 0);
+});
+
+it('Limpa as tarefas completadas', () => {
+  cy.visit('');
+  cy.get('[data-cy=todo-input]').type('Tarefa 1{enter}').type('Tarefa 2{enter}');
+  cy.get('[data-cy=todos-list] li .toggle').first().click(); 
+
+  cy.get('.clear-completed').click();
+
+  cy.get('[data-cy=todos-list]').children().should('have.length', 1);
+  cy.get('[data-cy=todos-list] > li').first().should('contain', 'Tarefa 2');
+
+  cy.get('.clear-completed').should('not.be.visible');
+});
+
+it('permite a edição de uma tarefa', () => {
+  cy.visit('');
+  cy.get('[data-cy=todo-input]').type('Tarefa inicial{enter}');
+  cy.get('[data-cy=todos-list]').children().should('have.length', 1);
+
+  cy.get('[data-cy=todos-list] li label').dblclick();
+
+  cy.get('li.editing .edit')
+      .clear()
+      .type('Tarefa editada com sucesso{enter}');
+
+  cy.get('[data-cy=todos-list] li label')
+      .should('have.text', 'Tarefa editada com sucesso');
+
+  cy.get('[data-cy=todos-list] li').should('not.have.class', 'editing');
+});
