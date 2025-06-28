@@ -68,4 +68,60 @@ describe('TODOMvc App', () => {
       .children()
       .should('have.length', 2);
   });
+
+  it('Insere uma tarefa e marca a tarefa como concluída', () => {
+    cy.visit(''); 
+
+    cy.get('[data-cy=todo-input]')
+      .type('Trabalho de PDS{enter}');
+
+    cy.get('[data-cy=todos-list] > li [data-cy=toggle-todo-checkbox]')
+      .first()
+      .click();
+
+    cy.get('[data-cy=todos-list] > li [data-cy=toggle-todo-checkbox]')
+      .first()
+      .should('be.checked');
+  });
+
+  it('Marca todas as tarefas como concluídas', () => {
+    cy.visit(''); 
+
+    cy.get('[data-cy=todo-input]')
+      .type('Trabalho de PDS2{enter}');
+
+    cy.get('[data-cy=todo-input]')
+      .type('Estudo prova de Cálculo I{enter}');
+    
+    cy.get('.toggle-all-label')
+      .click();
+
+    cy.get('[data-cy=todos-list] > li [data-cy=toggle-todo-checkbox]')
+        .each(($el) => {
+          cy.wrap($el).should('be.checked');
+        });
+  });
+
+  it('Limpa todas as tarefas concluídas', () => {
+        cy.visit(''); 
+
+    cy.get('[data-cy=todo-input]')
+      .type('Estudo prova de Cálculo II{enter}');
+
+    cy.get('[data-cy=todo-input]')
+      .type('Trabalho de ASDL{enter}');
+    
+    cy.get('[data-cy=todos-list] > li [data-cy=toggle-todo-checkbox]')
+      .first()
+      .click();
+
+    cy.get('.clear-completed')
+      .click();
+
+    cy.get('[data-cy=todos-list]')
+      .children()
+      .should('have.length', 1)
+      .first()
+      .should('have.text', 'Trabalho de ASDL');
+  });
 });
